@@ -4,9 +4,9 @@
   options.icedos.virtualisation.docker =
     let
       inherit (icedosLib) mkAttrsOption mkBoolOption;
-      inherit (lib) readFile;
+      inherit (lib) importTOML;
 
-      inherit ((fromTOML (readFile ./config.toml)).icedos.virtualisation.docker)
+      inherit ((importTOML ./config.toml).icedos.virtualisation.docker)
         daemonSettings
         requireSudo
         ;
