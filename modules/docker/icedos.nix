@@ -3,17 +3,22 @@
 {
   options.icedos.virtualisation.docker =
     let
-      inherit (icedosLib) mkAttrsOption mkBoolOption;
-      inherit (lib) importTOML;
+      inherit (icedosLib) mkAttrsOption mkEitherOption;
+      inherit (lib) importTOML types;
 
       inherit ((importTOML ./config.toml).icedos.virtualisation.docker)
         daemonSettings
-        requireSudo
+        privilegedUsers
         ;
     in
     {
       daemonSettings = mkAttrsOption { default = daemonSettings; };
-      requireSudo = mkBoolOption { default = requireSudo; };
+
+      # docker access is root equivalent — grant the group only to an explicit
+      # allowlist of usernames, or the literal "all" (constrained to fail on typos).
+      privilegedUsers = mkEitherOption { default = privilegedUsers; } (types.addCheck types.str (
+        v: v == "all"
+      )) (types.listOf types.str);
     };
 
   outputs.nixosModules =
@@ -27,9 +32,11 @@
         }:
 
         let
-          inherit (lib) mapAttrs mkIf;
+          inherit (lib) elem mapAttrs mkIf;
           inherit (config.icedos) users virtualisation;
-          inherit (virtualisation.docker) daemonSettings requireSudo;
+          inherit (virtualisation.docker) daemonSettings privilegedUsers;
+          # "all" grants the group to every user; otherwise an explicit list.
+          dockerGroupFor = n: privilegedUsers == "all" || elem n privilegedUsers;
         in
         {
           virtualisation.docker = {
@@ -37,8 +44,10 @@
             daemon.settings = daemonSettings;
           };
 
-          users.users = mapAttrs (_: _: {
-            extraGroups = mkIf (!requireSudo) [ "docker" ];
+          # docker access is root equivalent — group granted only to
+          # privilegedUsers (or every user when "all"), never by default.
+          users.users = mapAttrs (n: _: {
+            extraGroups = mkIf (dockerGroupFor n) [ "docker" ];
           }) users;
         }
       )

@@ -1,4 +1,7 @@
 [icedos.virtualisation.docker]
-requireSudo = true # CAUTION: Disabling this gives every user root privileges!
+# Users that get the `docker` group (root equivalent) — an allowlist of
+# usernames, or "all" to grant it to every user. Empty by default: nobody gets
+# docker access from this module alone — docker runs via sudo.
+privilegedUsers = []
 
 [icedos.virtualisation.docker.daemonSettings]
