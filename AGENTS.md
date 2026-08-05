@@ -41,7 +41,7 @@ validation and let the user activate.
 
 ## Notable modules / gotchas
 
-- `docker` (daemon settings, `requireSudo` group toggle), `podman`, `virt-manager`
+- `docker` (daemon settings, `privilegedUsers` docker-group allowlist), `podman`, `virt-manager`
   (libvirtd + IOMMU kernel params keyed off `icedos.hardware.cpus`), `virtualbox`
   (`vboxusers` group + `kvm.enable_virt_at_load=0` for kernel 6.13+), `waydroid`.
 - `virt-manager` reads `icedos.hardware.cpus` and `virtualbox` reads `icedos.users` —
