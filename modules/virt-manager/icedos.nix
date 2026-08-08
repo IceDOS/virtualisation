@@ -1,4 +1,4 @@
-{ ... }:
+{ icedosLib, ... }:
 
 {
   outputs.nixosModules =
@@ -12,9 +12,8 @@
         }:
 
         let
-          inherit (lib) hasAttr mapAttrs optional;
-          inherit (config.icedos) hardware users;
-          inherit (hardware) cpus;
+          inherit (lib) mapAttrs optional;
+          inherit (config.icedos) users;
         in
         {
           programs.virt-manager.enable = true;
@@ -33,8 +32,16 @@
             # It only affects kernels with ACS Override support. Ex: CachyOS, Liquorix, Zen
             "pcie_acs_override=downstream,multifunction"
           ]
-          ++ optional (hasAttr "ryzen" cpus) "amd_iommu=on"
-          ++ optional (hasAttr "intel" cpus) "intel_iommu=on";
+          ++ optional (icedosLib.hasModule {
+            inherit config;
+            url = "github:icedos/hardware";
+            name = "ryzen";
+          }) "amd_iommu=on"
+          ++ optional (icedosLib.hasModule {
+            inherit config;
+            url = "github:icedos/hardware";
+            name = "intel";
+          }) "intel_iommu=on";
         }
       )
     ];
