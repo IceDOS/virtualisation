@@ -42,6 +42,11 @@
             url = "github:icedos/hardware";
             name = "intel";
           }) "intel_iommu=on";
+
+          icedos.system.tips.list = [
+            "Virt-manager can hand a real graphics card to a virtual machine, so games and 3D run at full speed in it."
+            "Virt-manager can pass a USB stick, webcam or printer plugged into this computer into a running virtual machine."
+          ];
         }
       )
     ];

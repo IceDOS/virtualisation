@@ -49,6 +49,11 @@
           users.users = mapAttrs (n: _: {
             extraGroups = mkIf (dockerGroupFor n) [ "docker" ];
           }) users;
+
+          icedos.system.tips.list = [
+            ''Docker asks for your password every time, unless privilegedUsers under [icedos.virtualisation.docker] has your name, or is set to "all".''
+            "Anyone listed in privilegedUsers option of Docker can take over the whole computer through it, so add only users you trust."
+          ];
         }
       )
     ];

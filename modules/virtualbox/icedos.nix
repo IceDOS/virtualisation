@@ -22,6 +22,11 @@
           ];
 
           users.users = mkGroupInjector "vboxusers" users;
+
+          icedos.system.tips.list = [
+            "VirtualBox runs another operating system in a window, and supports snapshots which puts it back the way it was if something breaks."
+            "VirtualBox needs its Guest Additions installed inside the virtual machine to resize its window and share folders with it."
+          ];
         }
       )
     ];
